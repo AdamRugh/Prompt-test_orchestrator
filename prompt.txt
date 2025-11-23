@@ -1,0 +1,14 @@
+Prompt: 
+"Copilot, remind me of the plan we made for building a prompt-driven test automation platform. 
+It should include: 
+- Copilot as the AI agent to turn natural language into structured test steps
+- Node.js orchestrator service as the traffic controller
+- Selenium MCP for browser/UI testing
+- Node.js for API testing
+- Python for DB testing
+- A persistence layer to save prompts and results for regression
+- A regression runner to replay saved prompts
+- CI/CD integration for nightly or deployment runs
+
+Please restate the step-by-step architecture, the recommended first sprint, and why this approach is efficient and agile."
+
