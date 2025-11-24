@@ -1,11 +1,15 @@
-// Stub routing logic
+// orchestrator/dispatcher.js
+const uiEngine = require('./engines/uiEngine');
+const apiEngine = require('./engines/apiEngine');
+const dbEngine = require('./engines/dbEngine');
+
 async function handlePrompt(prompt) {
   if (prompt.includes('UI')) {
-    return { engine: 'selenium', status: 'stubbed', output: 'UI test executed' };
+    return await uiEngine.run(prompt);   // call real Selenium demo
   } else if (prompt.includes('API')) {
-    return { engine: 'node-api', status: 'stubbed', output: 'API test executed' };
+    return await apiEngine.run(prompt);  // still stubbed for now
   } else if (prompt.includes('DB')) {
-    return { engine: 'python-db', status: 'stubbed', output: 'DB test executed' };
+    return await dbEngine.run(prompt);   // still stubbed for now
   }
   return { engine: 'unknown', status: 'skipped', output: 'No matching engine' };
 }

@@ -12,3 +12,5 @@ It should include:
 
 Please restate the step-by-step architecture, the recommended first sprint, and why this approach is efficient and agile."
 
+
+Remind me how we set up the demo where a user sends a prompt like "Run UI login test" and the dispatcher routes it to the UI engine, which uses Selenium MCP to launch a browser, run a test, and return results — all integrated with persistence, regression runner, and CI/CD.
