@@ -50,7 +50,7 @@ const selectByIdStmt = db.prepare(`
     FROM test_runs
     WHERE id = ?
 `);
-
+//Adam
 // Helpers
 function _stringifyResult(result) {
     if (result === undefined || result === null) return null;
