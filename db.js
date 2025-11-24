@@ -7,13 +7,22 @@ const db = new Database(dbPath);
 
 // Initialize table
 db.exec(`
-    CREATE TABLE IF NOT EXISTS test_runs (
+    CREATE TABLE IF NOT EXISTS baselines (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        prompt TEXT NOT NULL,
-        status TEXT,
-        result TEXT,
+        prompt TEXT NOT NULL UNIQUE,
+        expected_result TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
+`);
+
+const insertBaselineStmt = db.prepare(`
+    INSERT OR REPLACE INTO baselines (prompt, expected_result)
+    VALUES (@prompt, @expected_result)
+`);
+
+const selectBaselineStmt = db.prepare(`
+    SELECT prompt, expected_result
+    FROM baselines
 `);
 
 // Prepared statements
@@ -71,4 +80,16 @@ function getRuns() {
     return rows.map(_parseResult);
 }
 
-module.exports = { saveRun, getRuns };
+function saveBaseline(prompt, expectedResult) {
+  const payload = { prompt: String(prompt), expected_result: JSON.stringify(expectedResult) };
+  insertBaselineStmt.run(payload);
+}
+
+function getBaselines() {
+  return selectBaselineStmt.all().map(row => ({
+    prompt: row.prompt,
+    expected_result: JSON.parse(row.expected_result)
+  }));
+}
+
+module.exports = { saveRun, getRuns, saveBaseline, getBaselines };
