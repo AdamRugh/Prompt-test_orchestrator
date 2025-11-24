@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "test": "npx jest",
-  "test:watch": "npx jest --watch",
-  "test:unit": "npx jest db.test.js server.test.js",
-  "test:regression": "npx jest regressionRunner.test.js",
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:unit": "jest db.test.js server.test.js",
+  "test:regression": "jest regressionRunner.test.js",
   "seed-baselines": "node scripts/seedBaselines.js",
   "ci": "npm run seed-baselines && npm run test:unit && npm run test:regression"
   },
