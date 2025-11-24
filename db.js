@@ -5,27 +5,37 @@ const Database = require('better-sqlite3');
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'orchestrator.db');
 const db = new Database(dbPath);
 
-// Initialize table
+// Initialize baselines table with consistent column name
 db.exec(`
     CREATE TABLE IF NOT EXISTS baselines (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         prompt TEXT NOT NULL UNIQUE,
-        expected_result TEXT NOT NULL,
+        expected_output TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
 `);
 
 const insertBaselineStmt = db.prepare(`
-    INSERT OR REPLACE INTO baselines (prompt, expected_result)
-    VALUES (@prompt, @expected_result)
+  INSERT OR REPLACE INTO baselines (prompt, expected_output)
+  VALUES (@prompt, @expected_output)
 `);
 
 const selectBaselineStmt = db.prepare(`
-    SELECT prompt, expected_result
+    SELECT prompt, expected_output
     FROM baselines
 `);
 
-// Prepared statements
+// Prepared statements for test_runs table
+db.exec(`
+    CREATE TABLE IF NOT EXISTS test_runs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        prompt TEXT NOT NULL,
+        status TEXT,
+        result TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+`);
+
 const insertStmt = db.prepare(`
     INSERT INTO test_runs (prompt, status, result)
     VALUES (@prompt, @status, @result)
@@ -80,16 +90,16 @@ function getRuns() {
     return rows.map(_parseResult);
 }
 
-function saveBaseline(prompt, expectedResult) {
-  const payload = { prompt: String(prompt), expected_result: JSON.stringify(expectedResult) };
-  insertBaselineStmt.run(payload);
+function saveBaseline(prompt, expectedOutput) {
+    const payload = { prompt: String(prompt), expected_output: JSON.stringify(expectedOutput) };
+    insertBaselineStmt.run(payload);
 }
 
 function getBaselines() {
-  return selectBaselineStmt.all().map(row => ({
-    prompt: row.prompt,
-    expected_result: JSON.parse(row.expected_result)
-  }));
+    return selectBaselineStmt.all().map(row => ({
+        prompt: row.prompt,
+        expected_output: JSON.parse(row.expected_output)
+    }));
 }
 
 module.exports = { saveRun, getRuns, saveBaseline, getBaselines };
