@@ -13,4 +13,6 @@ It should include:
 Please restate the step-by-step architecture, the recommended first sprint, and why this approach is efficient and agile."
 
 
-Remind me how we set up the demo where a user sends a prompt like "Run UI login test" and the dispatcher routes it to the UI engine, which uses Selenium MCP to launch a browser, run a test, and return results — all integrated with persistence, regression runner, and CI/CD.
+Remind me how we set up the demo where a user sends a prompt like "Run UI login test" and the dispatcher routes it to the UI engine, which uses Selenium MCP to launch a browser, run a test, and return results — all integrated with persistence
+
+Let's continue building the hybrid demo where I show a simple UI, talk to the Copilot agent, and run a Selenium MCP test against https://demoqa.com/text-box. I want the demo to highlight both auto-fill with generated data and manual entry mode, with slow steps so it's easy to watch.

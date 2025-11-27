@@ -1,12 +1,12 @@
-const { saveBaseline } = require('./db');
+const { saveBaseline } = require('../orchestrator/persistence');
 
 function seed() {
-  // Existing stubbed baselines
+  // Stubbed baselines
   saveBaseline('Hello, test prompt', 'Replayed prompt: Hello, test prompt');
   saveBaseline('Login to app', 'Replayed prompt: Login to app');
   saveBaseline('Ensure run exists', 'Replayed prompt: Ensure run exists');
 
-  // 🔑 UI demo baseline
+  // UI demo baseline
   saveBaseline(
     'Run UI login test',
     '✅ Edge launched, navigated to example.com, title was: Example Domain'

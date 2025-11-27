@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Agent Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    #results { margin-top: 1em; padding: 1em; border: 1px solid #ccc; }
+    .field { margin-bottom: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>Testing Agent Demo</h1>
+  <p>Talk to Copilot and run a test:</p>
+
+  <div class="field">
+    <label>Prompt:</label><br>
+    <input id="prompt" type="text" size="60" value="Test https://demoqa.com/text-box">
+  </div>
+
+  <div class="field">
+    <label>Mode:</label><br>
+    <select id="mode">
+      <option value="auto">Auto-fill</option>
+      <option value="manual">Manual</option>
+    </select>
+  </div>
+
+  <div id="manualFields" style="display:none;">
+    <h3>Manual Data Entry</h3>
+    <label>User Name:</label><br>
+    <input id="userName" type="text"><br>
+    <label>Email:</label><br>
+    <input id="userEmail" type="text"><br>
+    <label>Current Address:</label><br>
+    <input id="currentAddress" type="text"><br>
+    <label>Permanent Address:</label><br>
+    <input id="permanentAddress" type="text"><br>
+  </div>
+
+  <button onclick="runTest()">Run Test</button>
+
+  <div id="results"></div>
+
+  <script>
+    document.getElementById('mode').addEventListener('change', function() {
+      document.getElementById('manualFields').style.display =
+        this.value === 'manual' ? 'block' : 'none';
+    });
+
+    async function runTest() {
+      const prompt = document.getElementById('prompt').value;
+      const mode = document.getElementById('mode').value;
+
+      let body = { prompt };
+      if (mode === 'manual') {
+        body.userData = {
+          "#userName": document.getElementById('userName').value,
+          "#userEmail": document.getElementById('userEmail').value,
+          "#currentAddress": document.getElementById('currentAddress').value,
+          "#permanentAddress": document.getElementById('permanentAddress').value
+        };
+        body.mode = "manual";
+      } else {
+        body.mode = "auto";
+      }
+
+      const res = await fetch('/runTest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      document.getElementById('results').innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>

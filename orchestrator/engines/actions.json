@@ -1,0 +1,16 @@
+{
+  "text-box": [
+    { "action": "type", "selector": "#userName", "value": "Test User" },
+    { "action": "type", "selector": "#userEmail", "value": "test@example.com" },
+    { "action": "type", "selector": "#currentAddress", "value": "123 Demo Street" },
+    { "action": "type", "selector": "#permanentAddress", "value": "456 Example Ave" },
+    { "action": "click", "selector": "#submit" },
+    { "action": "read", "selector": "#output" }
+  ],
+  "login": [
+    { "action": "type", "selector": "#username", "value": "demoUser" },
+    { "action": "type", "selector": "#password", "value": "demoPass" },
+    { "action": "click", "selector": "#loginBtn" },
+    { "action": "read", "selector": "#welcomeMessage" }
+  ]
+}

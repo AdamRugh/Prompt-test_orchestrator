@@ -1,6 +1,8 @@
 const express = require('express');
+const path = require('path');
 const winston = require('winston');
 const { saveRun, getRuns } = require('./db'); // import DB helpers
+const { run, runRecipe, handlePrompt } = require('./orchestrator/engines/uiEngine'); // <-- point to uiEngine
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,28 +19,45 @@ const logger = winston.createLogger({
 
 // Middleware
 app.use(express.json()); // parse JSON bodies
+app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
     logger.info(`Incoming request: ${req.method} ${req.url} - body: ${JSON.stringify(req.body)}`);
     next();
 });
 
-// POST /runTest - accepts { prompt }
-app.post('/runTest', (req, res) => {
-    const { prompt } = req.body || {};
+// POST /runTest - accepts { prompt, mode }
+app.post('/runTest', async (req, res) => {
+    const { prompt, mode } = req.body || {};
     if (!prompt) {
         logger.info('runTest called without prompt');
         return res.status(400).json({ error: 'Missing "prompt" in request body' });
     }
 
-    logger.info('runTest received prompt');
+    logger.info(`runTest received prompt: ${prompt} (mode=${mode || 'default'})`);
 
     try {
-        const saved = saveRun(prompt, 'completed', 'This is a stubbed response for the provided prompt.');
+        let runResult;
+
+        // 🔑 Decide which engine to call based on mode
+        if (mode === 'recipe') {
+            // Example: run a recipe explicitly
+            runResult = await runRecipe(null, prompt, []); // supply recipe if needed
+        } else if (mode === 'auto') {
+            // Unified dispatcher
+            runResult = await handlePrompt(prompt);
+        } else {
+            // Default: just load page
+            runResult = await run(prompt);
+        }
+
+        // Save the run into DB with the real output
+        const saved = saveRun(prompt, runResult.status, runResult.output);
+
         logger.info(`Run saved: ${saved.id}`);
         res.json(saved);
     } catch (err) {
-        logger.error(`Failed to save run: ${err.message || err}`);
-        res.status(500).json({ error: 'Failed to save run' });
+        logger.error(`Failed to process run: ${err.message || err}`);
+        res.status(500).json({ error: 'Failed to process run' });
     }
 });
 
